@@ -1,9 +1,12 @@
 import mongoose from "mongoose";
 import env from "dotenv";
+
 env.config();
 
-export const connectDB = async () => {
+// main().catch((err) => console.log(err));
+
+export const dbConnection = async function main() {
   await mongoose.connect(`${process.env.MONGO_URL}/pinterest`, () =>
-    console.log("MONGODB connected")
+    console.log("DB Connected Successfylly")
   );
 };
