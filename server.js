@@ -6,6 +6,7 @@ import { authRoutes } from "./routes/auth.js";
 import { connectDB } from "./config/db.js";
 //import { errorHandler } from "./middleware/error.js";
 import { resetPasswordRoutes } from "./routes/passwordReset.js";
+import { dashboardHomeRouter } from "./routes/dashboardHome.js";
 env.config();
 
 const app = express();
@@ -25,6 +26,7 @@ connectDB();
 app.use("/users", userRoutes);
 app.use("/auth", authRoutes);
 app.use("/password-reset", resetPasswordRoutes);
+app.use("/api/pinterest", dashboardHomeRouter);
 
 //Error Handler Should be the last piece of  middleware
 //app.use(errorHandler);
@@ -34,10 +36,5 @@ app.get("/", (req, res) => {
     "Hi There, this is the Backend service for Pinterest Clone Project 💐💐💐"
   );
 });
-const server = app.listen(PORT, () =>
-  console.log(`App running on http://localhost:${PORT}`)
-);
-// process.on("unhandledRejection", (err, promise) => {
-//   console.log(`Logged Error:${err}`);
-//   server.close(() => process.exit(1));
-// });
+
+app.listen(PORT, () => console.log(`App running on http://localhost:${PORT}`));
