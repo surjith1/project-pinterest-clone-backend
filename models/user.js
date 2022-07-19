@@ -7,11 +7,12 @@ const userSchema = new mongoose.Schema({
   email: { type: "String", required: true },
   password: { type: "String", required: true, minlength: 5 },
   age: { type: "Number", maxlength: 3 },
+  verified: { type: Boolean, default: false },
 });
 
 userSchema.methods.generateAuthToken = function () {
   const token = jwt.sign({ _id: this._id }, process.env.JWTPRIVATEKEY, {
-    expiresIn: "7d",
+    expiresIn: "3600",
   });
   return token;
 };
@@ -22,7 +23,7 @@ const validate = (data) => {
   const schema = Joi.object({
     email: Joi.string().email().required().label("Email"),
     password: passwordComplexity().required().label("Password"),
-    age: Joi.number().label("Last Name"),
+    age: Joi.number().label("Age"),
   });
   return schema.validate(data);
 };

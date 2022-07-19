@@ -4,6 +4,7 @@ import { User } from "../models/user.js";
 import Joi from "joi";
 import bcrypt from "bcrypt";
 import crypto from "crypto";
+import { Token } from "./../models/token.js";
 
 env.config();
 const router = express.Router();
@@ -23,7 +24,21 @@ router.post("/login", async (req, res) => {
       user.password
     );
     if (!validPassword)
-      return res.status(401).send({ message: "Invalid Email or Password" });
+      return res.status(401).send({ message: "Invalid Password" });
+    // if (!user.verified) {
+    //   let token = await Token.findOne({ userId: user._id });
+    //   if (!token) {
+    //     token = await new Token({
+    //       userId: user._id,
+    //       token: crypto.randomBytes(32).toString("hex"),
+    //     }).save();
+    //     const url = `${process.env.BASE_URL}users/${user._id}/verify/${token.token}`;
+    //     await sendEmail(user.email, "Verify Email", url);
+    //   }
+    //   return res
+    //     .status(400)
+    //     .send({ message: "An Email sent to your account please verify" });
+    // }
 
     const token = user.generateAuthToken();
     res.status(200).send({ data: token, message: "logged in successfully" });
