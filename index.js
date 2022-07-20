@@ -33,7 +33,7 @@ app.use("/api/pinterest", dashboardHomeRouter);
 
 app.get("/", (req, res) => {
   res.send(
-    `Welcome to Hall Booking API in Port ${PORT} and endpoint is "/hall-booking"`
+    `Welcome to Hall Booking API in Port ${PORT} and endpoint is "/api/pinterest/dashboard-home"`
   );
 });
 
