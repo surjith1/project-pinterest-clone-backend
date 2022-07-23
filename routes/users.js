@@ -1,15 +1,18 @@
 import express from "express";
 import bcrypt from "bcrypt";
-import { User, validate } from "../models/user.js";
+import { User } from "../models/user.js";
+import { Token } from "./../models/token.js";
+import crypto from "crypto";
+import { sendEmail } from "./../utils/sendEmail.js";
 
 const router = express.Router();
-router.post("/signup", async (req, res) => {
+router.post("/", async (req, res) => {
   try {
-    const { error } = validate(req.body);
-    if (error)
-      return res.status(400).send({ message: error.details[0].message });
+    // const { error } = validate(req.body);
+    // if (error)
+    //   return res.status(400).send({ message: error.details[0].message });
 
-    const user = await User.findOne({ email: req.body.email });
+    let user = await User.findOne({ email: req.body.email });
     if (user)
       return res
         .status(409)
@@ -18,21 +21,21 @@ router.post("/signup", async (req, res) => {
     const salt = await bcrypt.genSalt(Number(process.env.SALT));
     const hashPassword = await bcrypt.hash(req.body.password, salt);
 
-    await new User({ ...req.body, password: hashPassword }).save();
-    res.status(201).send({
-      message: "User created successfully, Please Go ahead for the Login",
-    });
-  } catch (error) {
-    res.status(500).send({ message: "Internal Server Error" });
-  }
-});
+    user = await new User({ ...req.body, password: hashPassword }).save();
 
-router.get("/get-email", async (req, res, next) => {
-  try {
-    const home = await dashBoardHome.findOne({ email: req.body });
-    res.send("Email Shown");
+    const token = await new Token({
+      userId: user._id,
+      token: crypto.randomBytes(32).toString("hex"),
+    }).save();
+    const url = `${process.env.BASE_URL}users/${user.id}/verify/${token.token}`;
+    await sendEmail(user.email, "Verify Email", url);
+
+    res
+      .status(201)
+      .send({ message: "An Email sent to your account please verify" });
   } catch (error) {
-    res.send({ msg: "An Error Occured" });
+    console.log(error);
+    res.status(500).send({ message: "Internal Server Error" });
   }
 });
 

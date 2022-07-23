@@ -5,8 +5,8 @@ import env from "dotenv";
 import { userRoutes } from "./routes/users.js";
 import { authRoutes } from "./routes/auth.js";
 import { dbConnection } from "./db.js";
-import { resetPasswordRoutes } from "./routes/passwordReset.js";
 import { dashboardHomeRouter } from "./routes/dashboardHome.js";
+import { passwordResetRoutes } from "./routes/passwordReset.js";
 
 const app = express();
 env.config();
@@ -26,9 +26,9 @@ dbConnection();
 //middlewares
 app.use(cors());
 app.use(express.json());
-app.use("/users", userRoutes);
-app.use("/auth", authRoutes);
-app.use("/password-reset", resetPasswordRoutes);
+app.use("/api/users", userRoutes);
+app.use("/api/auth", authRoutes);
+app.use("/api/password-reset", passwordResetRoutes);
 app.use("/api/pinterest", dashboardHomeRouter);
 
 app.get("/", (req, res) => {
